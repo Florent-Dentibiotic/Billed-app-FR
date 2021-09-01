@@ -1,8 +1,6 @@
 export const formatDate = (dateStr) => {
     const dateString = Date.parse(dateStr)
-    
     if(Number.isNaN(dateString) || dateStr === ''){
-      console.log(dateStr)
       return `Date non valide`
     } else {
       const date = new Date(dateStr)
@@ -12,12 +10,6 @@ export const formatDate = (dateStr) => {
       const month = mo.charAt(0).toUpperCase() + mo.slice(1)
       return `${parseInt(da)} ${month.substr(0,3)}. ${ye.toString()}`
     }
-}
-
-function checkRange(dateStr){
-  if(dateStr){
-    return
-  }
 }
  
 export const formatStatus = (status) => {
