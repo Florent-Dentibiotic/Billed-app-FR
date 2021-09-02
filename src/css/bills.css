@@ -52,6 +52,7 @@
   border-radius: 10px;
   padding-bottom: 16px;
   height: 70vh;
+  overflow: scroll;
 }
 
 .icon-actions {
@@ -69,6 +70,8 @@
 
 .table thead th {
   border-bottom: 0px solid #fff !important;
+  position: sticky; top: 0; z-index: 1;
+  background-color:#fff;
 }
 
 .table td, .table th {
