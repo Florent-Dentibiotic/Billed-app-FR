@@ -17,17 +17,23 @@ export default class NewBill {
   }
   handleChangeFile = e => {
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
-    const filePath = e.target.value.split(/\\/g)
-    const fileName = filePath[filePath.length-1]
-    this.firestore
-      .storage
-      .ref(`justificatifs/${fileName}`)
-      .put(file)
-      .then(snapshot => snapshot.ref.getDownloadURL())
-      .then(url => {
-        this.fileUrl = url
-        this.fileName = fileName
-      })
+    if(file.type !== 'image/png' && file.type !== 'image/jpeg'){
+      e.explicitOriginalTarget.value = null
+      alert('Merci de selectionner une image au format .png, ou .jpg ou .jpeg.')
+    } else {
+      const filePath = e.target.value.split(/\\/g)
+      const fileName = filePath[filePath.length-1]
+      this.firestore
+        .storage
+        .ref(`justificatifs/${fileName.slice(5)}`)
+        .put(file)
+        .then(snapshot => snapshot.ref.getDownloadURL())
+        .then(url => {
+          this.fileUrl = url
+          this.fileName = fileName
+        })
+    }
+    console.log(e.explicitOriginalTarget.value)
   }
   handleSubmit = e => {
     e.preventDefault()
