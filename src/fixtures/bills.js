@@ -29,21 +29,6 @@ export const bills = [{
   "fileUrl": "https://firebasestorage.googleapis.com/v0/b/billable-677b6.a…dur.png?alt=media&token=571d34cb-9c8f-430a-af52-66221cae1da3"
 },
 {
-  "id": "qcCK3SzECmaZAGRrHjaC",
-  "status": "refused",
-  "pct": 20,
-  "amount": 200,
-  "email": "a@a",
-  "name": "test2",
-  "vat": "40",
-  "fileName": "preview-facture-free-201801-pdf-1.jpg",
-  "date": "2002-02-02",
-  "commentAdmin": "pas la bonne facture",
-  "commentary": "test2",
-  "type": "Restaurants et bars",
-  "fileUrl": "https://firebasestorage.googleapis.com/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=4df6ed2c-12c8-42a2-b013-346c1346f732"
-},
-{
   "id": "BeKy5Mo4jkmdfPGYpTxZ",
   "vat": "",
   "amount": 100,
@@ -57,5 +42,20 @@ export const bills = [{
   "date": "2001-01-01",
   "status": "refused",
   "commentAdmin": "en fait non"
+},
+{
+  "id": "qcCK3SzECmaZAGRrHjaC",
+  "status": "refused",
+  "pct": 20,
+  "amount": 200,
+  "email": "a@a",
+  "name": "test2",
+  "vat": "40",
+  "fileName": "preview-facture-free-201801-pdf-1.jpg",
+  "date": "2002-02-02",
+  "commentAdmin": "pas la bonne facture",
+  "commentary": "test2",
+  "type": "Restaurants et bars",
+  "fileUrl": "https://firebasestorage.googleapis.com/v0/b/billable-677b6.a…f-1.jpg?alt=media&token=4df6ed2c-12c8-42a2-b013-346c1346f732"
 }
 ]

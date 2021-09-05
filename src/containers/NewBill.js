@@ -31,9 +31,8 @@ export default class NewBill {
         .then(url => {
           this.fileUrl = url
           this.fileName = fileName
-        })
+      })
     }
-    console.log(e.explicitOriginalTarget.value)
   }
   handleSubmit = e => {
     e.preventDefault()
@@ -57,6 +56,7 @@ export default class NewBill {
   }
 
   // not need to cover this function by tests
+  /* istanbul ignore next */
   createBill = (bill) => {
     if (this.firestore) {
       this.firestore
