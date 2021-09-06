@@ -17,10 +17,14 @@ export default class NewBill {
   }
   handleChangeFile = e => {
     const file = this.document.querySelector(`input[data-testid="file"]`).files[0]
+    const documentError = this.document.querySelector(`p[data-testid="document-error"]`)
     if(file.type !== 'image/png' && file.type !== 'image/jpeg'){
-      e.explicitOriginalTarget.value = null
-      alert('Merci de selectionner une image au format .png, ou .jpg ou .jpeg.')
+      e.target.value = null
+      documentError.innerHTML = 'Merci de selectionner une image au format .png, ou .jpg ou .jpeg.'
+      this.fileName = "invalid"
+      return null
     } else {
+      documentError.innerHTML= ''
       const filePath = e.target.value.split(/\\/g)
       const fileName = filePath[filePath.length-1]
       this.firestore
@@ -36,6 +40,8 @@ export default class NewBill {
   }
   handleSubmit = e => {
     e.preventDefault()
+    if(this.filename === "invalid"){ return false }
+
     console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
     const email = JSON.parse(localStorage.getItem("user")).email
     const bill = {

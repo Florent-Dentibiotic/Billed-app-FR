@@ -1,10 +1,11 @@
-import { screen } from "@testing-library/dom"
+import { screen, fireEvent } from "@testing-library/dom"
 import userEvent from '@testing-library/user-event'
 import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
 import { ROUTES } from "../constants/routes"
 import { localStorageMock } from "../__mocks__/localStorage.js"
 import firebase from "../__mocks__/firebase"
+//import firestore from "../__mocks__/firestore.js"
 
 const newBill = {
   email: "test@email.com",
@@ -15,7 +16,7 @@ const newBill = {
   vat: 5.5,
   pct: 20,
   commentary: "test.commentary",
-  fileUrl: "this.fileUrl",
+  fileUrl: "https://ensiwiki.ensimag.fr/index.php?title=Fichier:Apple.png",
   fileName: "this.fileName",
   status: 'pending'
 }
@@ -23,20 +24,63 @@ const newBill = {
 describe("Given I am connected as an employee", () => {
   describe("When I am on NewBill Page", () => {
     test("Then new Bill is created", () => {
-      const onNavigate = (pathname) => { document.body.innerHTML = ROUTES({ pathname }) }
       Object.defineProperty(window, 'localStorage', { value: localStorageMock })
-      window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' }))
-      //const thisNewBill = new NewBill({ document, onNavigate, firestore, localStorage: window.localStorage})          
+      window.localStorage.setItem('user', JSON.stringify({ type: 'Employee', email: 'employee@email.com' }))      
       const html = NewBillUI()
       document.body.innerHTML = html
-      //to-do write assertion
-      const handleSubmit = jest.fn(() => NewBill.handleSubmit(newBill))
-      const formSubmit = screen.getByTestId("form-new-bill")
-      userEvent.click(formSubmit)
-      expect(handleSubmit).toBeTruthy()
-    })
-    test("Then it should import file details", () => {
+      const onNavigate = (pathname) => { document.body.innerHTML = ROUTES({ pathname }) }
+      const thisNewBill = new NewBill({ document, onNavigate, firestore: null, localStorage: window.localStorage})
       
+      screen.getByTestId('expense-type').value = newBill.type
+      screen.getByTestId('expense-name').value = newBill.name
+      screen.getByTestId('amount').value = newBill.value
+      screen.getByTestId('datepicker').value = newBill.date
+      screen.getByTestId('vat').value = newBill.vat
+      screen.getByTestId('expense-name').value = newBill.pct
+      screen.getByTestId('commentary').value = newBill.commentary
+      thisNewBill.fileUrl = newBill.fileUrl
+      thisNewBill.fileName = newBill.fileName
+
+      const handleSubmit = jest.fn((e) => thisNewBill.handleSubmit(e))
+      thisNewBill.createBill = (thisNewBill) => thisNewBill
+
+      const formSubmit = screen.getByTestId("form-new-bill")
+      formSubmit.addEventListener('click', handleSubmit)
+      userEvent.click(formSubmit)
+      expect(handleSubmit).toHaveBeenCalled()
+    })
+    test("Then it should import file details if file is an image", () => {
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' }))          
+      const html = NewBillUI()
+      document.body.innerHTML = html
+
+      const onNavigate = (pathname) => { document.body.innerHTML = ROUTES({ pathname }) }
+      const thisNewBill = new NewBill({ document, onNavigate, firestore: null, localStorage: window.localStorage})
+      const file = screen.getByTestId("file")
+      const fileDoc = new File(["mon-image"], "image.png", { type: "image/png" })
+      const handleChangeFile = jest.fn(() => thisNewBill.handleChangeFile)
+      file.addEventListener("upload", handleChangeFile)
+      userEvent.upload(file, fileDoc)
+      expect(file.files[0].name).toBe("image.png")
+    })
+    test("Then it should no import file details if file is not an image", () => {
+      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+      window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' }))          
+      const html = NewBillUI()
+      document.body.innerHTML = html
+
+      const onNavigate = (pathname) => { document.body.innerHTML = ROUTES({ pathname }) }
+      const thisNewBill = new NewBill({ document, onNavigate, firestore: null, localStorage: window.localStorage})
+      const file = screen.getByTestId("file")
+      const fileDoc = {target: {
+        files: [new File(["text"], "text.txt", { type: "text/plain" })]
+      }}
+      const handleChangeFile = jest.fn(() => thisNewBill.handleChangeFile)
+      file.addEventListener("upload", handleChangeFile)
+      userEvent.upload(file, fileDoc)
+      expect(file.files[0].type).toBe(undefined)
+      expect(handleChangeFile(fileDoc)).toBeTruthy()
     })
   })
 })
