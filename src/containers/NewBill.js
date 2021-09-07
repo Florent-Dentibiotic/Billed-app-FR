@@ -27,9 +27,8 @@ export default class NewBill {
       documentError.innerHTML= ''
       const filePath = e.target.value.split(/\\/g)
       const fileName = filePath[filePath.length-1]
-      this.firestore
-        .storage
-        .ref(`justificatifs/${fileName.slice(5)}`)
+      this.firestore.storage
+        .ref(`justificatifs/${fileName}`)
         .put(file)
         .then(snapshot => snapshot.ref.getDownloadURL())
         .then(url => {
@@ -40,9 +39,8 @@ export default class NewBill {
   }
   handleSubmit = e => {
     e.preventDefault()
-    if(this.filename === "invalid"){ return false }
+    if(this.filename === "invalid"){ return }
 
-    console.log('e.target.querySelector(`input[data-testid="datepicker"]`).value', e.target.querySelector(`input[data-testid="datepicker"]`).value)
     const email = JSON.parse(localStorage.getItem("user")).email
     const bill = {
       email,

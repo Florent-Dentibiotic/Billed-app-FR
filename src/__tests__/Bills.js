@@ -64,11 +64,6 @@ describe("Given I am connected as an employee", () => {
       userEvent.click(eye)
       const modale = screen.getByTestId('modal-body-show')
       expect(modale).toBeTruthy()
-      /*const handleClickIconEye = jest.fn(Bills.handleClickIconEye)
-      const eye = screen.getAllByTestId('icon-eye')[0]
-      eye.addEventListener('click', handleClickIconEye)
-      userEvent.click(eye)
-      expect(handleClickIconEye).toHaveBeenCalled()*/
     })
   })
 
