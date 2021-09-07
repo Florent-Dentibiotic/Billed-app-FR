@@ -1,4 +1,4 @@
-import { fireEvent, screen } from "@testing-library/dom"
+import { screen } from "@testing-library/dom"
 import userEvent from '@testing-library/user-event'
 import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
@@ -6,6 +6,7 @@ import { ROUTES } from "../constants/routes"
 import { localStorageMock } from "../__mocks__/localStorage.js"
 import firebase from "../__mocks__/firebase"
 import Firestore from "../app/Firestore.js"
+jest.mock("../app/Firestore.js");
 
 const newBill = {
   email: "test@email.com",
@@ -29,7 +30,7 @@ describe("Given I am connected as an employee", () => {
       const html = NewBillUI()
       document.body.innerHTML = html
       const onNavigate = (pathname) => { document.body.innerHTML = ROUTES({ pathname }) }
-      const thisNewBill = new NewBill({ document, onNavigate, firestore: Firestore, localStorage: window.localStorage})
+      const thisNewBill = new NewBill({ document, onNavigate, firestore: null, localStorage: window.localStorage})
       
       screen.getByTestId('expense-type').value = newBill.type
       screen.getByTestId('expense-name').value = newBill.name
@@ -54,14 +55,17 @@ describe("Given I am connected as an employee", () => {
       window.localStorage.setItem('user', JSON.stringify({ type: 'Employee', email: 'cedric.hiely@billed.com' }))          
       const html = NewBillUI()
       document.body.innerHTML = html
+
       const onNavigate = (pathname) => { document.body.innerHTML = ROUTES({ pathname }) }
       const thisNewBill = new NewBill({ document, onNavigate, firestore: Firestore, localStorage: window.localStorage})
+
       const file = screen.getByTestId("file")
       const fileImage = new File(["mon-image"], "image.png", { type: "image/png" })
+
       const handleChangeFile = jest.fn(() => thisNewBill.handleChangeFile)
       file.addEventListener("change", handleChangeFile)
       userEvent.upload(file, fileImage)
-      //expect(file.files).toHaveLength(1)
+      expect(file.files).toHaveLength(1)
     })
     test("Then it should no import file details if file is not an image", () => {
       Object.defineProperty(window, 'localStorage', { value: localStorageMock })
