@@ -1,12 +1,13 @@
+/* eslint-disable no-undef */
 import { screen } from "@testing-library/dom"
 import userEvent from '@testing-library/user-event'
+import BillsUI from "../views/BillsUI.js"
 import NewBillUI from "../views/NewBillUI.js"
 import NewBill from "../containers/NewBill.js"
 import { ROUTES } from "../constants/routes"
 import { localStorageMock } from "../__mocks__/localStorage.js"
 import firebase from "../__mocks__/firebase"
 import Firestore from "../app/Firestore.js"
-jest.mock("../app/Firestore.js");
 
 const newBill = {
   email: "test@email.com",
@@ -89,10 +90,26 @@ describe("Given I am connected as an employee", () => {
 describe("Given I am a user connected as Employee", () => {
   describe("When I navigate to NewBill", () => {
     test("Then push new bill to mock API POST", async () => {
-       const postSpy = jest.spyOn(firebase, "post")
-       const bills = await firebase.post(newBill)
-       expect(postSpy).toHaveBeenCalledTimes(1)
-       expect(bills.data.length).toBe(1)
+        const postSpy = jest.spyOn(firebase, "post")
+        const bills = await firebase.post(newBill)
+        expect(postSpy).toHaveBeenCalledTimes(1)
+        expect(bills.data.length).toBe(1)
     })
+    test("add bill to API and fails with 404 message error", async () => {
+        firebase.post.mockImplementationOnce(() => 
+          Promise.reject(new Error("Erreur 404")))
+        const html = BillsUI({ error: "Erreur 404" })
+        document.body.innerHTML = html;
+        const message = await screen.getByText(/Erreur 404/)
+        expect(message).toBeTruthy();
+    })
+    test("add bill to API and fails with 500 message error", async () => {
+        firebase.post.mockImplementationOnce(() => 
+          Promise.reject(new Error("Erreur 500")))
+        const html = BillsUI({ error: "Erreur 500" })
+        document.body.innerHTML = html
+        const message = await screen.getByText(/Erreur 500/)
+        expect(message).toBeTruthy()
+    });
   })
 })
