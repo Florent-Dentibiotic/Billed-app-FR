@@ -27,7 +27,8 @@ export default class NewBill {
       documentError.innerHTML= ''
       const filePath = e.target.value.split(/\\/g)
       const fileName = filePath[filePath.length-1]
-      this.firestore.storage
+      if(this.firestore){
+        this.firestore.storage
         .ref(`justificatifs/${fileName}`)
         .put(file)
         .then(snapshot => snapshot.ref.getDownloadURL())
@@ -35,6 +36,7 @@ export default class NewBill {
           this.fileUrl = url
           this.fileName = fileName
       })
+      }
     }
   }
   handleSubmit = e => {

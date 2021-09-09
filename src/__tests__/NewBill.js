@@ -58,7 +58,7 @@ describe("Given I am connected as an employee", () => {
       document.body.innerHTML = html
 
       const onNavigate = (pathname) => { document.body.innerHTML = ROUTES({ pathname }) }
-      const thisNewBill = new NewBill({ document, onNavigate, firestore: Firestore, localStorage: window.localStorage})
+      const thisNewBill = new NewBill({ document, onNavigate, firestore: null, localStorage: window.localStorage})
 
       const file = screen.getByTestId("file")
       const fileImage = new File(["mon-image"], "image.png", { type: "image/png" })
