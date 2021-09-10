@@ -7,7 +7,6 @@ import NewBill from "../containers/NewBill.js"
 import { ROUTES } from "../constants/routes"
 import { localStorageMock } from "../__mocks__/localStorage.js"
 import firebase from "../__mocks__/firebase"
-import Firestore from "../app/Firestore.js"
 
 const newBill = {
   email: "test@email.com",
@@ -23,15 +22,18 @@ const newBill = {
   status: 'pending'
 }
 
+Object.defineProperty(window, 'localStorage', { value: localStorageMock })
+const onNavigate = (pathname) => { document.body.innerHTML = ROUTES({ pathname }) }
+
 describe("Given I am connected as an employee", () => {
   describe("When I am on NewBill Page", () => {
     test("Then new Bill is created", () => {
-      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
-      window.localStorage.setItem('user', JSON.stringify({ type: 'Employee', email: 'employee@email.com' }))      
+
+      localStorageMock.setItem('user', JSON.stringify({ type: 'Employee', email: 'employee@email.com' }))      
       const html = NewBillUI()
       document.body.innerHTML = html
-      const onNavigate = (pathname) => { document.body.innerHTML = ROUTES({ pathname }) }
-      const thisNewBill = new NewBill({ document, onNavigate, firestore: null, localStorage: window.localStorage})
+
+      const thisNewBill = new NewBill({ document, onNavigate, firestore: null, localStorage: localStorageMock})
       
       screen.getByTestId('expense-type').value = newBill.type
       screen.getByTestId('expense-name').value = newBill.name
@@ -49,16 +51,16 @@ describe("Given I am connected as an employee", () => {
       const formSubmit = screen.getByTestId("form-new-bill")
       formSubmit.addEventListener('click', handleSubmit)
       userEvent.click(formSubmit)
+
       expect(handleSubmit).toHaveBeenCalled()
     })
     test("Then it should import file details if file is an image", () => {
-      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
-      window.localStorage.setItem('user', JSON.stringify({ type: 'Employee', email: 'cedric.hiely@billed.com' }))          
+
+      localStorageMock.setItem('user', JSON.stringify({ type: 'Employee', email: 'cedric.hiely@billed.com' }))          
       const html = NewBillUI()
       document.body.innerHTML = html
 
-      const onNavigate = (pathname) => { document.body.innerHTML = ROUTES({ pathname }) }
-      const thisNewBill = new NewBill({ document, onNavigate, firestore: null, localStorage: window.localStorage})
+      const thisNewBill = new NewBill({ document, onNavigate, firestore: null, localStorage: localStorageMock})
 
       const file = screen.getByTestId("file")
       const fileImage = new File(["mon-image"], "image.png", { type: "image/png" })
@@ -66,21 +68,24 @@ describe("Given I am connected as an employee", () => {
       const handleChangeFile = jest.fn(() => thisNewBill.handleChangeFile)
       file.addEventListener("change", handleChangeFile)
       userEvent.upload(file, fileImage)
+
       expect(file.files).toHaveLength(1)
     })
     test("Then it should no import file details if file is not an image", () => {
-      Object.defineProperty(window, 'localStorage', { value: localStorageMock })
-      window.localStorage.setItem('user', JSON.stringify({ type: 'Employee' }))          
+
+      localStorageMock.setItem('user', JSON.stringify({ type: 'Employee' }))          
       const html = NewBillUI()
       document.body.innerHTML = html
 
-      const onNavigate = (pathname) => { document.body.innerHTML = ROUTES({ pathname }) }
-      const thisNewBill = new NewBill({ document, onNavigate, firestore: Firestore, localStorage: window.localStorage})
+      const thisNewBill = new NewBill({ document, onNavigate, firestore: null, localStorage: localStorageMock})
+      
       const file = screen.getByTestId("file")
       const fileDoc = new File(["text"], "text.txt", { type: "text/plain" })
+
       const handleChangeFile = jest.fn(() => thisNewBill.handleChangeFile)
       file.addEventListener("upload", handleChangeFile)
       userEvent.upload(file, fileDoc)
+
       expect(handleChangeFile(fileDoc)).toBeTruthy()
     })
   })
