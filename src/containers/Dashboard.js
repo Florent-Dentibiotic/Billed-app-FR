@@ -104,6 +104,7 @@ export default class {
       $('.vertical-navbar').css({ height: '120vh' })
     }
     this.counter ++
+    console.log(this.counter)
     e.stopImmediatePropagation()
     $('#icon-eye-d').click(this.handleClickIconEye)
     $('#btn-accept-bill').click((e) => this.handleAcceptSubmit(e, bill))
@@ -147,6 +148,9 @@ export default class {
 
     bills.forEach(bill => {
       $(`#open-bill${bill.id}`).click((e) => this.handleEditTicket(e, bill, bills))
+      // $(`#status-bills-container${index} #open-bill${bill.id}`).click((e) =>
+      //   this.handleEditTicket(e, bill, bills)
+      // );
     })
 
     return bills
